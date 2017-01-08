@@ -13,8 +13,10 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -25,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private static final long SCAN_PERIOD = 10 * 1000;
     private BluetoothAdapter mBluetoothAdapter;
     private int REQUEST_ENABLE_BT = 1;
-    private ConcurrentLinkedQueue<String> mArrayAdapter;
-    private ConcurrentLinkedQueue<BluetoothDevice> mBluetoothDevices;
+    private ArrayAdapter<String> mArrayAdapter;
+    private ArrayList<BluetoothDevice> mBluetoothDevices;
     private BluetoothLeScanner mBluetoothScanner;
     private Handler mHandler;
 
@@ -36,10 +38,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        mHandler = new Handler();
+        mBluetoothDevices = new ArrayList();
+
         checkIfBLisSupported();
         initializeBLAdapter();
         checkIfBLEnabled();
 
+        scanLeDevice(true);
 
     }
 
@@ -64,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
             super.onScanResult(callbackType, result);
             Log.d(TAG, "onScanResult: " + result.toString());
             BluetoothDevice bluetoothDevice = result.getDevice();
-            mArrayAdapter.add(bluetoothDevice.getAddress() + " " + bluetoothDevice.getName());
+            //mArrayAdapter.add(bluetoothDevice.getAddress() + " " + bluetoothDevice.getName());
             mBluetoothDevices.add(bluetoothDevice);
         }
 
@@ -91,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
     private void initializeBLAdapter() {
         final BluetoothManager bluetoothManager = (BluetoothManager) getSystemService(Context.BLUETOOTH_SERVICE);
         mBluetoothAdapter = bluetoothManager.getAdapter();
+        mBluetoothScanner = mBluetoothAdapter.getBluetoothLeScanner();
     }
 
     private void checkIfBLisSupported() {
