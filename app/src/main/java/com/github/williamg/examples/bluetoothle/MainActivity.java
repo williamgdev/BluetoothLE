@@ -75,8 +75,11 @@ public class MainActivity extends AppCompatActivity {
             super.onScanResult(callbackType, result);
             Log.d(TAG, "onScanResult: " + result.toString());
             BluetoothDevice bluetoothDevice = result.getDevice();
-            mArrayAdapter.add(bluetoothDevice.getAddress() + " " + bluetoothDevice.getName());
-            mBluetoothDevices.add(bluetoothDevice);
+            String name = bluetoothDevice.getAddress() + " " + bluetoothDevice.getName();
+            if (!mBluetoothDevices.contains(bluetoothDevice)){
+                mBluetoothDevices.add(bluetoothDevice);
+                mArrayAdapter.add(name);
+            }
         }
 
         @Override
