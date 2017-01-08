@@ -15,6 +15,7 @@ import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -26,7 +27,7 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-    private static final long SCAN_PERIOD = 10 * 1000;
+    private static final long SCAN_PERIOD = 1 * 1000;
     private BluetoothAdapter mBluetoothAdapter;
     private int REQUEST_ENABLE_BT = 1;
     private ArrayAdapter<String> mArrayAdapter;
@@ -43,16 +44,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mHandler = new Handler();
-        mBluetoothDevices = new ArrayList();
-
         checkIfBLisSupported();
         initializeBLAdapter();
         checkIfBLEnabled();
-
-        listView = (ListView) findViewById(R.id.main_listview);
-        mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<String>());
-        listView.setAdapter(mArrayAdapter);
 
         broadcastReceiver = new BroadcastReceiver() {
             @Override
@@ -89,8 +83,6 @@ public class MainActivity extends AppCompatActivity {
         };
         intentFilter = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         registerReceiver(broadcastReceiver, intentFilter);
-
-        scanLeDevice(true);
     }
 
     private void scanLeDevice(final boolean enable) {
@@ -120,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
             if (!mBluetoothDevices.contains(bluetoothDevice)){
                 mBluetoothDevices.add(bluetoothDevice);
                 mArrayAdapter.add(name);
+                mArrayAdapter.notifyDataSetChanged();
             }
         }
 
@@ -172,5 +165,14 @@ public class MainActivity extends AppCompatActivity {
         if (broadcastReceiver != null) {
             unregisterReceiver(broadcastReceiver);
         }
+    }
+
+    public void OnScan(View view) {
+        mHandler = new Handler();
+        mBluetoothDevices = new ArrayList();
+        listView = (ListView) findViewById(R.id.main_listview);
+        mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<String>());
+        listView.setAdapter(mArrayAdapter);
+        scanLeDevice(true);
     }
 }
