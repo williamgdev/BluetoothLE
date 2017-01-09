@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -25,7 +26,7 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ListView.OnItemClickListener{
     private static final String TAG = "MainActivity";
     private static final long SCAN_PERIOD = 1 * 1000;
     private BluetoothAdapter mBluetoothAdapter;
@@ -173,6 +174,13 @@ public class MainActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.main_listview);
         mArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, new ArrayList<String>());
         listView.setAdapter(mArrayAdapter);
+        listView.setOnItemClickListener(this);
         scanLeDevice(true);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        Intent intent = new Intent(this, DeviceActivity.class);
+        startActivity(intent);
     }
 }
